@@ -1,29 +1,144 @@
+import 'package:fi_ma/model/register/expense_db_helper.dart';
 import 'package:fi_ma/view/register/exin_detail_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, });
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
+
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
+  late List<Map<String, dynamic>> totalExpense;
+  late List<Map<String, dynamic>> foodExpense;
+  late List<Map<String, dynamic>> trafficExpense;
+  late List<Map<String, dynamic>> fixedCostExpense;
+  late List<Map<String, dynamic>> entertainmentExpense;
+  late int total;
+  late int foodTotal;
+  late int trafficTotal;
+  late int fixedCostTotal;
+  late int entertainmentTotal;
+  bool isLoading = false;
+  late DateTime result;
+  late DateTime _now;
+  late DateTime rresult;
+
   @override
   void initState() {
     super.initState() ;
+    totalExpense = [];
+    foodExpense = [];
+    trafficExpense = [];
+    fixedCostExpense = [];
+    entertainmentExpense = [];
+    total = 0;
+    foodTotal = 0;
+    trafficTotal = 0;
+    fixedCostTotal = 0;
+    entertainmentTotal = 0;
+    _now = DateTime.now();
+    result = DateTime(_now.year, _now.month);
+    rresult = DateTime(_now.year, _now.month + 1, 1).add(Duration(days: -1));
+    print(_now.month);
+    print(rresult);
+    getExpenseData();
+    getFoodData();
+    getTrafficData();
+    getFixedCostData();
+    getEntertainmentData();
   }
 
-  @override
+  Future getExpenseData() async {
+    setState(() => isLoading = true);
+  final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+  final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_datetime LIKE '2023-02%'";
+  final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+  totalExpense = result;
+
+  for(int i = 0; i < result.length; i++) {
+   int sum = result[i]['expense_amount_including_tax'];
+   total += sum;
+  }
+    setState(() => isLoading = false);
+}
+
+  Future getFoodData() async {
+    setState(() => isLoading = true);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_category_code = '食費'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+
+    foodExpense = result;
+
+    for(int i = 0; i < foodExpense.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      foodTotal += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
+  Future getTrafficData() async {
+    setState(() => isLoading = true);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_category_code = '交通費'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+
+    trafficExpense = result;
+
+    for(int i = 0; i < trafficExpense.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      trafficTotal += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
+  Future getFixedCostData() async {
+    setState(() => isLoading = true);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_category_code = '固定費'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+
+    fixedCostExpense = result;
+
+    for(int i = 0; i < fixedCostExpense.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      fixedCostTotal += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
+  Future getEntertainmentData() async {
+    setState(() => isLoading = true);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_category_code = '交際費'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+
+    entertainmentExpense = result;
+
+    for(int i = 0; i < entertainmentExpense.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      entertainmentTotal += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Fi-MA', style: TextStyle(fontSize: 25),),
         centerTitle: true,
       ),
-      body: Center(
+      body: isLoading
+      ? const Center(
+        child: CircularProgressIndicator(),
+      ):
+       Center(
         child: Column(
           children: <Widget>[
             SizedBox(height: 10,),
@@ -57,33 +172,46 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       Expanded(
                         child: PieChart(
                           PieChartData(
-                              centerSpaceRadius: 60,
+                              // centerSpaceRadius: 60,
                               startDegreeOffset: 300,  //要検討
                               sections: [
                                 PieChartSectionData(
                                   borderSide: BorderSide(color: Colors.black, width: 1),
                                   color: Colors.red,
+                                  title: "食費",
+                                  value: foodTotal.toDouble(),
+                                  radius: 50,
+                                  // titlePositionPercentageOffset: 0.5,
                                 ),
                                 PieChartSectionData(
                                   borderSide: BorderSide(color: Colors.black, width: 1),
                                   color: Colors.purple,
+                                  title: "交通費",
+                                  value: trafficTotal.toDouble(),
+                                  radius: 50,
                                 ),
                                 PieChartSectionData(
                                   borderSide: BorderSide(color: Colors.black, width: 1),
                                   color: Colors.blueAccent,
+                                  title: "固定費",
+                                  value: fixedCostTotal.toDouble(),
+                                  radius: 50,
                                 ),
                                 PieChartSectionData(
                                   borderSide: BorderSide(color: Colors.black, width: 1),
                                   color: Colors.orange,
+                                  title: "交際費",
+                                  value: entertainmentTotal.toDouble(),
+                                  radius: 50,
                                 ),
-                                PieChartSectionData(
-                                  borderSide: BorderSide(color: Colors.black, width: 1),
-                                  color: Colors.green,
-                                ),
-                                PieChartSectionData(
-                                  borderSide: BorderSide(color: Colors.black, width: 1),
-                                  color: Colors.yellow,
-                                ),
+                                // PieChartSectionData(
+                                //   borderSide: BorderSide(color: Colors.black, width: 1),
+                                //   color: Colors.green,
+                                // ),
+                                // PieChartSectionData(
+                                //   borderSide: BorderSide(color: Colors.black, width: 1),
+                                //   color: Colors.yellow,
+                                // ),
                               ]
                           ),
                         ),
@@ -111,21 +239,63 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 children: [
                   Text('合計金額:', style: TextStyle(fontSize: 30),),
                   SizedBox(width: 15,),
-                  Text('¥70,000',style: TextStyle(fontSize: 35, decoration: TextDecoration.underline),),
+                  Text(total.toString(),style: TextStyle(fontSize: 35, decoration: TextDecoration.underline),),
                 ],
               ),
             ),
             SizedBox(height: 10,),
             Container(
               width: double.infinity,
-              height: 150,
+              height: 30,
               // color: Colors.yellowAccent,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text('食費', style: TextStyle(fontSize: 25),),
                   SizedBox(width: 15,),
-                  Text('￥2,000', style: TextStyle(fontSize: 25),)
+                  Text(foodTotal.toString(), style: TextStyle(fontSize: 25),)
+                ],
+              ),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              width: double.infinity,
+              height: 30,
+              // color: Colors.yellowAccent,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('交通費', style: TextStyle(fontSize: 25),),
+                  SizedBox(width: 15,),
+                  Text(trafficTotal.toString(), style: TextStyle(fontSize: 25),)
+                ],
+              ),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              width: double.infinity,
+              height: 30,
+              // color: Colors.yellowAccent,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('固定費', style: TextStyle(fontSize: 25),),
+                  SizedBox(width: 15,),
+                  Text(fixedCostTotal.toString(), style: TextStyle(fontSize: 25),)
+                ],
+              ),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              width: double.infinity,
+              height: 30,
+              // color: Colors.yellowAccent,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('交際費', style: TextStyle(fontSize: 25),),
+                  SizedBox(width: 15,),
+                  Text(entertainmentTotal.toString(), style: TextStyle(fontSize: 25),)
                 ],
               ),
             ),

@@ -1,4 +1,3 @@
-import 'package:fi_ma/view/register/exin_list.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -163,8 +162,8 @@ class _ExpenseDetailEditState extends State<ExpenseDetailEdit> with SingleTicker
   }
 
   void createOrUpdateIncome() async {
-    final isUpdate = (widget.incomes != null);     // 画面が空でなかったら
-
+    final isUpdate = (widget.incomes != null);
+    // print(isUpdate);// 画面が空でなかったら
     if (isUpdate) {
       await updateIncome();                        // updateの処理
     } else {

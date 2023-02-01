@@ -1,6 +1,4 @@
-import 'package:fi_ma/footer.dart';
 import 'package:flutter/material.dart';
-
 import '../../model/register/expense_db_helper.dart';
 import '../../model/register/expenses.dart';
 import '../../model/register/income_db_helper.dart';
@@ -102,7 +100,7 @@ class _ExpenseListPageState extends State<ExpenseList> {
                         Container(
                           child: SizedBox(
                             child: ListView.builder(              // 取得したcatsテーブル全件をリスト表示する
-                              itemCount: expenseList.length,          // 取得したデータの件数を取得
+                              itemCount: expenseList.length, // 取得したデータの件数を取得
                               itemBuilder: (BuildContext context, int index) {
                                 final expense = expenseList[index];       // 1件分のデータをcatに取り出す
                                 return Card(                      // ここで1件分のデータを表示
@@ -175,7 +173,8 @@ class _ExpenseListPageState extends State<ExpenseList> {
 
       floatingActionButton: FloatingActionButton(                   // ＋ボタンを下に表示する
         child: const Icon(Icons.add),                               // ボタンの形を指定
-        onPressed: () async {                                       // ＋ボタンを押したときの処理を設定
+        onPressed: () async {
+          // print(expenseList.length);// ＋ボタンを押したときの処理を設定
           await Navigator.of(context).push(                         // ページ遷移をNavigatorで設定
             MaterialPageRoute(
                 builder: (context) => const ExpenseDetailEdit()           // 詳細更新画面（元ネタがないから新規登録）を表示するcat_detail_edit.dartへ遷移

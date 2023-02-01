@@ -3,7 +3,7 @@ import 'package:fi_ma/view/deferred_payment/deferred_payment_list.dart';
 import 'package:fi_ma/view/register/exin_list.dart';
 import 'package:flutter/material.dart';
 import 'package:fi_ma/view/menu.dart';
-import 'package:fi_ma/view/budget/budget_sample.dart';
+import 'package:fi_ma/view/budget/budget.dart';
 
 
 class Footer extends StatefulWidget {
@@ -18,7 +18,7 @@ class _Footer extends State<Footer> {
     HomeScreen(),
     ExpenseList(),
     DeferredPaymentList(),
-    BudgetSample(),
+    Budget(),
     Menu(),
   ];
 
