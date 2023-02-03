@@ -32,7 +32,7 @@ class _ExpenseDetailEditState extends State<ExpenseDetailEdit> with SingleTicker
   late String expense_memo;
   late DateTime expense_created_at;
   late DateTime expense_updated_at;
-  final List<String> _expense_category = <String>['支出カテゴリの選択','食費', '交通費', '固定費', '交際費','日用品','衣服','医療費','通信費','娯楽','その他'];
+  final List<String> _expense_category = <String>['支出カテゴリの選択','食費', '交通費', '固定費', '交際費','日用品','衣服','医療費','娯楽','その他'];
   late String _expense_category_selected;
   final List<String> _payment= <String>['支払い方法を選択','現金', 'クレジット', '電子マネー'];
   late String _payment_selected;

@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'incomes.dart';
@@ -59,12 +60,25 @@ class IncomeDbHelper {
     ''');
   }
 
-  Future<List<Incomes>> selectAllIncomes() async {
+  // Future<List<Incomes>> selectAllIncomes() async {
+  //   final db = await incomeinstance.incomedatabase;
+  //   final String sql = "SELECT * FROM incomes ORDER BY income_day DESC";
+  //   final incomesData = await db.rawQuery(sql);          // 条件指定しないでcatsテーブルを読み込む
+  //
+  //   return incomesData.map((json) => Incomes.fromJson(json)).toList();    // 読み込んだテーブルデータをListにパースしてreturn
+  // }
+
+  Future<List<Incomes>> selectDefIncomes() async {
     final db = await incomeinstance.incomedatabase;
-    final incomesData = await db.query('incomes');          // 条件指定しないでcatsテーブルを読み込む
+    DateTime _now = DateTime.now();
+    var dtFormat = DateFormat("yyyy-MM-dd");
+    String strDate = dtFormat.format(_now);
+    final String sql = "SELECT * FROM incomes WHERE income_day >= '$strDate' ORDER BY income_day DESC";
+    final incomesData = await db.rawQuery(sql);
 
     return incomesData.map((json) => Incomes.fromJson(json)).toList();    // 読み込んだテーブルデータをListにパースしてreturn
   }
+
 
   Future<Incomes> incomeData(int id) async {
     final db = await incomeinstance.incomedatabase;

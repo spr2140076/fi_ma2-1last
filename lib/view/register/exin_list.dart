@@ -36,13 +36,13 @@ class _ExpenseListPageState extends State<ExpenseList> {
 // catsテーブルに登録されている全データを取ってくる
   Future getExpensesList() async {
     setState(() => isLoading = true);                   //テーブル読み込み前に「読み込み中」の状態にする
-    expenseList = await ExpenseDbHelper.expenseinstance.selectAllExpenses(); //catsテーブルを全件読み込む
+    expenseList = await ExpenseDbHelper.expenseinstance.selectDefExpenses(); //catsテーブルを全件読み込む
     setState(() => isLoading = false);                  //「読み込み済」の状態にする
   }
 
   Future getIncomesList() async {
     setState(() => isLoading = true);
-    incomeList = await IncomeDbHelper.incomeinstance.selectAllIncomes();
+    incomeList = await IncomeDbHelper.incomeinstance.selectDefIncomes();
     setState(() => isLoading = false);
   }
 

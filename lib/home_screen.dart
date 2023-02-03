@@ -19,11 +19,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late List<Map<String, dynamic>> trafficExpense;
   late List<Map<String, dynamic>> fixedCostExpense;
   late List<Map<String, dynamic>> entertainmentExpense;
+  late List<Map<String, dynamic>> dailyNecessitiesExpense;
+  late List<Map<String, dynamic>> clothingExpense;
+  late List<Map<String, dynamic>> medicalExpense;
+  late List<Map<String, dynamic>> enterExpense;
+  late List<Map<String, dynamic>> etcExpense;
   late int total;
   late int foodTotal;
   late int trafficTotal;
   late int fixedCostTotal;
   late int entertainmentTotal;
+  late int dailyNecessitiesTotal;
+  late int clothingTotal;
+  late int medicalTotal;
+  late int enterTotal;
+  late int etcTotal;
   bool isLoading = false;
   late DateTime nowResult;
   late DateTime _now;
@@ -39,11 +49,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     trafficExpense = [];
     fixedCostExpense = [];
     entertainmentExpense = [];
+    dailyNecessitiesExpense = [];
+    clothingExpense = [];
+    medicalExpense = [];
+    enterExpense = [];
+    etcExpense = [];
     total = 0;
     foodTotal = 0;
     trafficTotal = 0;
     fixedCostTotal = 0;
     entertainmentTotal = 0;
+    dailyNecessitiesTotal = 0;
+    clothingTotal = 0;
+    medicalTotal = 0;
+    enterTotal = 0;
+    etcTotal = 0;
     _now = DateTime.now();
     oneWeek = '￥' + '1週間以内の後払いはありません';
     oneWeekDate = '';
@@ -118,6 +138,81 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     for(int i = 0; i < fixedCostExpense.length; i++) {
       int sum = result[i]['expense_amount_including_tax'];
       fixedCostTotal += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
+  Future getDailyNecessitiesData() async {
+    setState(() => isLoading = true);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_category_code = '日用品'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+
+    dailyNecessitiesExpense = result;
+
+    for(int i = 0; i < dailyNecessitiesExpense.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      dailyNecessitiesTotal += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
+  Future getClothingData() async {
+    setState(() => isLoading = true);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_category_code = '衣服'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+
+    clothingExpense = result;
+
+    for(int i = 0; i < clothingExpense.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      clothingTotal += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
+  Future getMedicalData() async {
+    setState(() => isLoading = true);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_category_code = '医療費'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+
+    medicalExpense = result;
+
+    for(int i = 0; i < medicalExpense.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      medicalTotal += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
+  Future getEnterData() async {
+    setState(() => isLoading = true);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_category_code = '娯楽'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+
+    enterExpense = result;
+
+    for(int i = 0; i < enterExpense.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      enterTotal += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
+  Future getEtcData() async {
+    setState(() => isLoading = true);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_category_code = '娯楽'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+
+    etcExpense = result;
+
+    for(int i = 0; i < etcExpense.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      etcTotal += sum;
     }
     setState(() => isLoading = false);
   }
