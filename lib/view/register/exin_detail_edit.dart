@@ -284,7 +284,7 @@ class _ExpenseDetailEditState extends State<ExpenseDetailEdit> with SingleTicker
                                     Radio(
                                         value: '後払い',
                                         groupValue: which,
-                                        onChanged: _onChangedGenre
+                                        onChanged: _onChangedGenre,
                                     ),
                                     const Text('後払い', style: TextStyle(fontSize: 25),),
                                   ],

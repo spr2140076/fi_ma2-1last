@@ -2,6 +2,7 @@ import 'package:fi_ma/model/register/expense_db_helper.dart';
 import 'package:fi_ma/view/register/exin_detail_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late int fixedCostTotal;
   late int entertainmentTotal;
   bool isLoading = false;
-  late DateTime result;
+  late DateTime nowResult;
   late DateTime _now;
   late DateTime rresult;
 
@@ -42,28 +43,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     fixedCostTotal = 0;
     entertainmentTotal = 0;
     _now = DateTime.now();
-    result = DateTime(_now.year, _now.month);
-    rresult = DateTime(_now.year, _now.month + 1, 1).add(Duration(days: -1));
-    print(_now.month);
-    print(rresult);
+    // nowResult = DateTime(_now.year, _now.month);
+    // rresult = DateTime(_now.year, _now.month + 1, 1).add(Duration(days: -1));
+    // print(_now.month);
+    // print(rresult);
     getExpenseData();
     getFoodData();
     getTrafficData();
     getFixedCostData();
     getEntertainmentData();
+    // print(totalExpense.runtimeType);
   }
 
   Future getExpenseData() async {
     setState(() => isLoading = true);
-  final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
-  final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_datetime LIKE '2023-02%'";
-  final List<Map<String, dynamic>> result = await db.rawQuery(sql);
-  totalExpense = result;
+    // _now = DateTime.now();
+    var dtFormat = DateFormat("yy-MM");
+    String strDate = dtFormat.format(_now);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_datetime LIKE '%$strDate%'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+    totalExpense = result;
 
-  for(int i = 0; i < result.length; i++) {
-   int sum = result[i]['expense_amount_including_tax'];
-   total += sum;
-  }
+    for(int i = 0; i < result.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      total += sum;
+    }
     setState(() => isLoading = false);
 }
 

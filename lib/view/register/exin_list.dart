@@ -152,7 +152,7 @@ class _ExpenseListPageState extends State<ExpenseList> {
                                           builder: (context) => IncomeDetail(id: income.income_id!),   // cardのデータの詳細を表示するcat_detail.dartへ遷移
                                         ),
                                       );
-                                      getIncomesList();    // データが更新されているかもしれないので、catsテーブル全件読み直し
+                                      getIncomesList();// データが更新されているかもしれないので、catsテーブル全件読み直し
                                     },
                                   ),
                                 );

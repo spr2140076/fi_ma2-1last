@@ -138,7 +138,7 @@ class _ExpenseDetailState extends State<ExpenseDetail> {
                     flex: dataExpandedFlex,
                     child: Container(                                      // catsテーブルのmemoの表示を設定
                       padding: const EdgeInsets.all(5.0),
-                      child: Text(expenses.expense_genre_code,
+                      child: Text(expenses.expense_genre_code.toString(),
                         style: const TextStyle(fontSize: 20),),
                     ),
                   ),
