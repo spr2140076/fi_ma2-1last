@@ -5,6 +5,7 @@ import '../../model/deferred_payment/deferred_payment_db_helper.dart';
 import '../../model/deferred_payment/deferred_payments.dart';
 import '../../model/register/expense_db_helper.dart';
 import '../../model/register/expenses.dart';
+import '../register/exin_detail_edit.dart';
 import 'deferred_payment_detail.dart';
 import 'deferred_payment_detail_edit.dart';
 
@@ -32,7 +33,6 @@ class _DeferredPaymentListPageState extends State<DeferredPaymentList> {
     totalExpenseList = [];
     _now = DateTime.now();
     getDeferredPaymentsList();
-    getExpenseData();
 
   }
 
@@ -44,19 +44,22 @@ class _DeferredPaymentListPageState extends State<DeferredPaymentList> {
     setState(() => isLoading = false);                  //「読み込み済」の状態にする
   }
 
+  /*
   Future getExpenseData() async {
     setState(() => isLoading = true);
-    var dtFormat = DateFormat("yy-MM");
+    var dtFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
     String strDate = dtFormat.format(_now);
-    print(strDate);
+    // print(strDate);
+    print(_now);
     final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
-    final String sql = "SELECT * FROM Expenses WHERE expense_genre_code = '後払い' AND  expense_datetime LIKE '%$strDate'";
+    final String sql = "SELECT * FROM Expenses WHERE expense_datetime >= '$strDate'";
     final List<Map<String, dynamic>> result = await db.rawQuery(sql);
     totalExpenseList = result;
     // print(totalExpenseList);
     // print(totalExpenseList.length);
     setState(() => isLoading = false);
   }
+   */
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +109,7 @@ class _DeferredPaymentListPageState extends State<DeferredPaymentList> {
         onPressed: () async {                                       // ＋ボタンを押したときの処理を設定
           await Navigator.of(context).push(                         // ページ遷移をNavigatorで設定
             MaterialPageRoute(
-                builder: (context) => const DeferredPaymentDetailEdit()           // 詳細更新画面（元ネタがないから新規登録）を表示するcat_detail_edit.dartへ遷移
+                builder: (context) => const ExpenseDetailEdit()           // 詳細更新画面（元ネタがないから新規登録）を表示するcat_detail_edit.dartへ遷移
             ),
           );
           getDeferredPaymentsList();                                            // 新規登録されているので、catテーブル全件読み直し

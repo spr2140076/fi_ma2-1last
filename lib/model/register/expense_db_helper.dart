@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'expenses.dart';
@@ -73,14 +74,30 @@ class ExpenseDbHelper {
 
   Future<List<Expenses>> selectAllExpenses() async {
     final db = await expenseinstance.expensedatabase;
-    final expensesData = await db.query('expenses');          // 条件指定しないでcatsテーブルを読み込む
+    final String sql = "SELECT * FROM Expenses ORDER BY expense_datetime DESC";
+    final expensesData = await db.rawQuery(sql);          // 条件指定しないでcatsテーブルを読み込む
 
     return expensesData.map((json) => Expenses.fromJson(json)).toList();    // 読み込んだテーブルデータをListにパースしてreturn
   }
 
   Future<List<Expenses>> selectDefExpenses() async {
     final db = await expenseinstance.expensedatabase;
-    final String sql = "SELECT * FROM Expenses WHERE expense_genre_code = '後払い'";
+    DateTime _now = DateTime.now();
+    var dtFormat = DateFormat("yyyy-MM-dd");
+    String strDate = dtFormat.format(_now);
+    final String sql = "SELECT * FROM Expenses WHERE expense_datetime >= '$strDate' ORDER BY expense_datetime ASC";
+    final expensesData = await db.rawQuery(sql);         // 条件指定しないでcatsテーブルを読み込む
+
+    return expensesData.map((json) => Expenses.fromJson(json)).toList();    // 読み込んだテーブルデータをListにパースしてreturn
+  }
+
+  Future<List<Expenses>> selectToMonthExpenses() async {
+    final db = await expenseinstance.expensedatabase;
+    DateTime _now = DateTime.now();
+    var dtFormat = DateFormat("yy-MM");
+    String strDate = dtFormat.format(_now);
+    print(strDate);
+    final String sql = "SELECT * FROM Expenses WHERE expense_genre_code = '後払い' AND expense_datetime LIKE '%$strDate%'";
     final expensesData = await db.rawQuery(sql);         // 条件指定しないでcatsテーブルを読み込む
 
     return expensesData.map((json) => Expenses.fromJson(json)).toList();    // 読み込んだテーブルデータをListにパースしてreturn

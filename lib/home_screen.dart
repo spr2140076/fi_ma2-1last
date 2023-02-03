@@ -28,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late DateTime nowResult;
   late DateTime _now;
   late DateTime rresult;
+  late String? oneWeek;
+  late String? oneWeekDate;
 
   @override
   void initState() {
@@ -43,6 +45,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     fixedCostTotal = 0;
     entertainmentTotal = 0;
     _now = DateTime.now();
+    oneWeek = '￥' + '1週間以内の後払いはありません';
+    oneWeekDate = '';
     // nowResult = DateTime(_now.year, _now.month);
     // rresult = DateTime(_now.year, _now.month + 1, 1).add(Duration(days: -1));
     // print(_now.month);
@@ -52,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     getTrafficData();
     getFixedCostData();
     getEntertainmentData();
+    getOneWeekData();
     // print(totalExpense.runtimeType);
   }
 
@@ -132,6 +137,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() => isLoading = false);
   }
 
+  // Future<List<Expenses>> selectDefExpenses() async {
+  //   final db = await expenseinstance.expensedatabase;
+  //   DateTime _now = DateTime.now();
+  //   var dtFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
+  //   String strDate = dtFormat.format(_now);
+  //   final String sql = "SELECT * FROM Expenses WHERE expense_datetime >= '$strDate'";
+  //   final expensesData = await db.rawQuery(sql);         // 条件指定しないでcatsテーブルを読み込む
+  //
+  //   return expensesData.map((json) => Expenses.fromJson(json)).toList();    // 読み込んだテーブルデータをListにパースしてreturn
+  // }
+
+  Future getOneWeekData() async {
+    setState(() => isLoading = true);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    DateTime _now = DateTime.now();
+    int dateRange = 7;
+    final endDate = _now.add(Duration(days: dateRange));
+    var dtFormat = DateFormat("yyyy-MM-dd");
+    var dttFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
+    String strDate = dtFormat.format(_now);
+    String strEndDate = dttFormat.format(endDate);
+    final String sql = "SELECT expense_amount_including_tax, expense_datetime FROM Expenses WHERE expense_genre_code = '後払い' AND expense_datetime BETWEEN '$strDate' AND '$strEndDate' ORDER BY expense_datetime ASC";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+    Map<String, dynamic> oneWeekDataResult = result[0];
+    oneWeek = oneWeekDataResult['expense_amount_including_tax'].toString();
+    oneWeekDate = oneWeekDataResult['expense_datetime'];
+    DateTime week = DateTime.parse('$oneWeekDate');
+    oneWeekDate = DateFormat("yyyy年MM月dd日").format(week);
+
+
+    entertainmentExpense = result;
+    setState(() => isLoading = false);
+  }
+
 @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,6 +186,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: Column(
           children: <Widget>[
             SizedBox(height: 10,),
+            Text('後払い', style: TextStyle(fontSize: 20, color: Colors.orange),),
             Container(
               width: double.infinity,
               height: 50,
@@ -154,16 +194,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    width: 300,
+                    width: 400,
                     height: 40,
-                    child: Text('一週間以内未払い請求書', style: TextStyle(fontSize: 25, color: Colors.orange),),
+                    //color: Colors.cyan,
+                    child: Text(oneWeekDate! + oneWeek!.toString(), style: TextStyle(fontSize: 25, color: Colors.orange,), textAlign: TextAlign.center,),
                   ),
                 ],
               ),
             ),
             Container(
               width: double.infinity,
-              height: 250,
+              height: 220,
               //color: Colors.lightGreen,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
