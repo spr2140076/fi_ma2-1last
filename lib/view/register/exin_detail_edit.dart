@@ -53,6 +53,12 @@ class _ExpenseDetailEditState extends State<ExpenseDetailEdit> with SingleTicker
   dynamic incomeDateTime;
   dynamic incomeDateFormat;
   String? incomeItem = '収入カテゴリの選択';
+
+  late List<Map<String, dynamic>> totalExpense;
+  bool isLoading = false;
+  late DateTime _now;
+  late int total;
+
 // Stateのサブクラスを作成し、initStateをオーバーライドすると、wedgit作成時に処理を動かすことができる。
 // ここでは、各項目の初期値を設定する
   @override
@@ -87,6 +93,11 @@ class _ExpenseDetailEditState extends State<ExpenseDetailEdit> with SingleTicker
 
     incomeDateTime = DateTime.now();
     incomeDateFormat = DateFormat("yyyy年MM月dd日").format(incomeDateTime);
+
+    totalExpense = [];
+    _now = DateTime.now();
+    total = 0;
+
 
   }
 
@@ -230,10 +241,28 @@ class _ExpenseDetailEditState extends State<ExpenseDetailEdit> with SingleTicker
     await IncomeDbHelper.incomeinstance.incomeinsert(income);        // catの内容で追加する
   }
 
+  Future getExpenseData() async {
+    setState(() => isLoading = true);
+
+    var dtFormat = DateFormat("yy-MM");
+    String strDate = dtFormat.format(_now);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_datetime LIKE '%$strDate%'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+    totalExpense = result;
+
+    for(int i = 0; i < result.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      total += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
 // 詳細編集画面を表示する
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.orange[50],
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black, size: 50,),
@@ -390,7 +419,10 @@ class _ExpenseDetailEditState extends State<ExpenseDetailEdit> with SingleTicker
                                 width: 100,
                                 child: ElevatedButton(
                                   child: const Text('登録', style: TextStyle(fontSize: 20),),
-                                  onPressed: createOrUpdateExpense,
+                                  onPressed: () {
+                                    createOrUpdateExpense();
+                                    getExpenseData();
+                                  },
                                 ),
                               ),
                             ],

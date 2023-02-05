@@ -92,12 +92,12 @@ class ExpenseDbHelper {
   }
 
   Future<List<Expenses>> selectToMonthExpenses() async {
-    final db = await expenseinstance.expensed　atabase;
+    final db = await expenseinstance.expensedatabase;
     DateTime _now = DateTime.now();
-    var dtFormat = DateFormat("yy-MM");
+    var dtFormat = DateFormat("yyyy-MM");
     String strDate = dtFormat.format(_now);
-    print(strDate);
-    final String sql = "SELECT * FROM Expenses WHERE expense_genre_code = '後払い' AND expense_datetime LIKE '%$strDate%'";
+    // print(strDate);
+    final String sql = "SELECT * FROM Expenses WHERE expense_datetime LIKE '$strDate%' ORDER BY expense_datetime DESC";
     final expensesData = await db.rawQuery(sql);         // 条件指定しないでcatsテーブルを読み込む
 
     return expensesData.map((json) => Expenses.fromJson(json)).toList();    // 読み込んだテーブルデータをListにパースしてreturn

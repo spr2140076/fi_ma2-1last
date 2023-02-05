@@ -68,15 +68,27 @@ class IncomeDbHelper {
   //   return incomesData.map((json) => Incomes.fromJson(json)).toList();    // 読み込んだテーブルデータをListにパースしてreturn
   // }
 
-  Future<List<Incomes>> selectDefIncomes() async {
+  // Future<List<Incomes>> selectDefIncomes() async {
+  //   final db = await incomeinstance.incomedatabase;
+  //   DateTime _now = DateTime.now();
+  //   var dtFormat = DateFormat("yyyy-MM-dd");
+  //   String strDate = dtFormat.format(_now);
+  //   final String sql = "SELECT * FROM incomes WHERE income_day >= '$strDate' ORDER BY income_day DESC";
+  //   final incomesData = await db.rawQuery(sql);
+  //
+  //   return incomesData.map((json) => Incomes.fromJson(json)).toList();    // 読み込んだテーブルデータをListにパースしてreturn
+  // }
+
+  Future<List<Incomes>> selectToMonthIncomes() async {
     final db = await incomeinstance.incomedatabase;
     DateTime _now = DateTime.now();
-    var dtFormat = DateFormat("yyyy-MM-dd");
+    var dtFormat = DateFormat("yyyy-MM");
     String strDate = dtFormat.format(_now);
-    final String sql = "SELECT * FROM incomes WHERE income_day >= '$strDate' ORDER BY income_day DESC";
+    // print(strDate);
+    final String sql = "SELECT * FROM incomes WHERE income_day LIKE '$strDate%' ORDER BY income_day DESC";
     final incomesData = await db.rawQuery(sql);
 
-    return incomesData.map((json) => Incomes.fromJson(json)).toList();    // 読み込んだテーブルデータをListにパースしてreturn
+    return incomesData.map((json) => Incomes.fromJson(json)).toList();
   }
 
 

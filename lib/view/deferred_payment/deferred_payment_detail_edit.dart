@@ -307,6 +307,7 @@ class _DeferredPaymentDetailEditState extends State<DeferredPaymentDetailEdit> w
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.orange[50],
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black, size: 50,),

@@ -23,6 +23,7 @@ class _DeferredPaymentListPageState extends State<DeferredPaymentList> {
   bool isLoading = false;   //テーブル読み込み中の状態を保有する
   late List<Map<String, dynamic>> totalExpenseList;
   late DateTime _now;
+  final formatter = NumberFormat("#,###");
 
 
 // Stateのサブクラスを作成し、initStateをオーバーライドすると、wedgit作成時に処理を動かすことができる。
@@ -64,6 +65,7 @@ class _DeferredPaymentListPageState extends State<DeferredPaymentList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.orange[50],
       appBar: AppBar(
           title: const Text('後払い一覧', style: TextStyle(fontSize: 25),),
           centerTitle: true,
@@ -86,7 +88,7 @@ class _DeferredPaymentListPageState extends State<DeferredPaymentList> {
                         Text(DateFormat("MM月dd日 ").format(deferred_payment.expense_datetime),style: const TextStyle(fontSize: 20)),
                         // Text(deferred_payment.deferred_payment_name,style: const TextStyle(fontSize: 20)), // Rowの中身を設定
                         Text(' ￥',style: const TextStyle(fontSize: 20),),
-                        Text(deferred_payment.expense_amount_including_tax.toString() ,style: const TextStyle(fontSize: 25),),     // catのnameを表示
+                        Text(formatter.format(deferred_payment.expense_amount_including_tax) ,style: const TextStyle(fontSize: 25),),     // catのnameを表示
                       ]
                   ),
                 ),

@@ -41,8 +41,13 @@ class _Budget extends State<Budget> {
   bool isLoading = false;
   List<Map<String, dynamic>> totalExpense = [];
   List<Map<String, dynamic>> totalExpenseToday = [];
+  List<Map<String, dynamic>> totalExpenseWeek = [];
   int total = 0;
   int totalToday = 0;
+  int totalWeek = 0;
+  DateTime mon = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+  DateTime sun = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 7));
+
 
   TextEditingController moneyController = TextEditingController();
 
@@ -78,7 +83,6 @@ class _Budget extends State<Budget> {
     _now = DateTime.now();
     var dtFormat = DateFormat("yy-MM-dd");
     String strDate = dtFormat.format(_now);
-    print(strDate);
     final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
     final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_datetime LIKE '%$strDate%'";
     final List<Map<String, dynamic>> result = await db.rawQuery(sql);
@@ -91,10 +95,32 @@ class _Budget extends State<Budget> {
     setState(() => isLoading = false);
   }
 
+  Future getExpenseDataToweek() async {
+    setState(() => isLoading = true);
+    _now = DateTime.now();
+    var dtFormat = DateFormat("yyyy-MM-dd");
+    String strMon = dtFormat.format(mon);
+    String strSun = dtFormat.format(sun);
+    // print(strSun);
+    // print(strDate);
+    // print(mon);
+    final db = await ExpenseDbHelper.expenseinstance.expensedatabase;
+    final String sql = "SELECT expense_amount_including_tax FROM Expenses WHERE expense_datetime BETWEEN '$strMon' AND '$strSun'";
+    final List<Map<String, dynamic>> result = await db.rawQuery(sql);
+    totalExpenseWeek = result;
+
+    for(int i = 0; i < result.length; i++) {
+      int sum = result[i]['expense_amount_including_tax'];
+      totalWeek += sum;
+    }
+    setState(() => isLoading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.orange[50],
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70.50),
         child: AppBar(
@@ -102,10 +128,10 @@ class _Budget extends State<Budget> {
           centerTitle: true,
         ),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            SizedBox(height: 60,),
+            SizedBox(height: 25,),
             Container(
               width: double.infinity,
               height: 80,
@@ -143,19 +169,20 @@ class _Budget extends State<Budget> {
                         });
                         getExpenseData();
                         getExpenseDataToday();
+                        getExpenseDataToweek();
                       },
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 40,),
+            SizedBox(height: 25,),
             Container(
               width: double.infinity,
               height: 40,
               child: Text('使用金額', style: TextStyle(fontSize: 30),),
             ),
-            SizedBox(height: 30,),
+            SizedBox(height: 10,),
             Container(
               width: double.infinity,
               height: 80,
@@ -183,7 +210,7 @@ class _Budget extends State<Budget> {
                 ],
               ),
             ),
-            SizedBox(height: 40,),
+            SizedBox(height: 20,),
             Container(
               width: double.infinity,
               height: 80,
@@ -201,7 +228,7 @@ class _Budget extends State<Budget> {
                   SizedBox(width: 25,),
                   Text('¥', style: TextStyle(fontSize: 30),),
                   SizedBox(width: 10,),
-                  Text('7,000', style: TextStyle(fontSize: 30),),
+                  Text(totalWeek.toString(), style: TextStyle(fontSize: 30),),
                   SizedBox(width: 10,),
                   Text('/', style: TextStyle(fontSize: 30),),
                   SizedBox(width: 10,),
@@ -211,7 +238,7 @@ class _Budget extends State<Budget> {
                 ],
               ),
             ),
-            SizedBox(height: 40,),
+            SizedBox(height: 20,),
             Container(
               width: double.infinity,
               height: 80,

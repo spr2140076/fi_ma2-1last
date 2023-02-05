@@ -34,6 +34,8 @@ class _Footer extends State<Footer> {
     return Scaffold(
         body: _screens[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.orange[300],
+          selectedItemColor: Colors.black,
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           items: const <BottomNavigationBarItem>[

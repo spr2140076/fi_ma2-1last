@@ -14,6 +14,7 @@ class CupertinoSwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.orange[50],
       appBar: AppBar(
         title: Text('メニュー', style: TextStyle(fontSize: 25),),
         centerTitle: true,
